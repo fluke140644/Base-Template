@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}บัญชีถูกล็อคชั่วคราว{% endblock %}
+
+{% block auth_content %}
+<div class="login-page">
+    <div class="login-card glass-card lockout-card">
+        <div class="lockout-icon">
+            <i class="fa-solid fa-lock"></i>
+        </div>
+        <h1 class="lockout-title">บัญชีถูกล็อคชั่วคราว</h1>
+        <p class="lockout-desc">
+            ระบบความปลอดภัยตรวจพบการพยายามเข้าสู่ระบบที่ผิดพลาดเกินกำหนดจาก IP ของคุณ<br>
+            ระบบจะปลดล็อคโดยอัตโนมัติใน <strong>1 ชั่วโมง</strong> เพื่อความปลอดภัยสูงสุด
+        </p>
+        <div class="lockout-tips">
+            <p><i class="fa-solid fa-circle-info"></i> หากต้องการปลดล็อคทันที กรุณาติดต่อผู้ดูแลระบบ</p>
+        </div>
+        <a href="{% url 'accounts:login' %}" class="btn btn-secondary">
+            <i class="fa-solid fa-rotate-left"></i> ลองเข้าสู่ระบบอีกครั้ง
+        </a>
+    </div>
+</div>
+{% endblock %}

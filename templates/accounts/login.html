@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Login{% endblock %}
+
+{% block auth_content %}
+<div class="login-page">
+    <div class="login-card glass-card">
+        <!-- Logo -->
+        <div class="login-brand">
+            <div class="brand-icon large-icon">
+                <i class="fa-solid fa-shapes"></i>
+            </div>
+            <h1 class="login-title">Fkll</h1>
+            <p class="login-subtitle">Base Template</p>
+        </div>
+
+        <!-- Form -->
+        <form method="post"
+            action="{% url 'accounts:login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"
+            class="login-form" id="loginForm" novalidate autocomplete="off">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="login-error" role="alert" id="loginErrorBox">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                {% for err in form.non_field_errors %}
+                <span>{{ err }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="form-group">
+                <label for="id_login_username" class="form-label">
+                    <i class="fa-regular fa-user"></i> ชื่อผู้ใช้ (Username)
+                </label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                <span class="field-error">{{ form.username.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="id_login_password" class="form-label">
+                    <i class="fa-solid fa-lock"></i> รหัสผ่าน (Password)
+                </label>
+                <div class="password-wrapper">
+                    {{ form.password }}
+                    <button type="button" class="toggle-password" id="togglePasswordBtn" aria-label="แสดง/ซ่อนรหัสผ่าน"
+                        onclick="togglePassword()">
+                        <i class="fa-regular fa-eye" id="eyeIcon"></i>
+                    </button>
+                </div>
+                {% if form.password.errors %}
+                <span class="field-error">{{ form.password.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block btn-login" id="loginSubmitBtn">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                เข้าสู่ระบบ
+            </button>
+        </form>
+
+        <!-- Security note -->
+        <div class="login-footer-note">
+            <i class="fa-slab fa-regular fa-bell"></i>
+            Build By Fkll
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function togglePassword() {
+        const pw = document.getElementById('id_login_password');
+        const icon = document.getElementById('eyeIcon');
+        if (pw && icon) {
+            if (pw.type === 'password') {
+                pw.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                pw.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+    }
+</script>
+{% endblock %}

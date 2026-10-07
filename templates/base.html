@@ -1,0 +1,236 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{% block meta_description %}NovaPulse — โครงสร้างระบบฐาน Django Base Template สวยงาม ปลอดภัย พร้อมต่อยอดโปรเจกต์{% endblock %}">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- No-cache for sensitive pages -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <title>{% block title %}NovaPulse{% endblock %}</title>
+    
+    <!-- Google Fonts: Outfit & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Base Stylesheet -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="dark-theme" data-session-timeout="{{ session_timeout_minutes|default:60 }}">
+    <!-- Ambient background glows -->
+    <div class="ambient-glow glow-1" aria-hidden="true"></div>
+    <div class="ambient-glow glow-2" aria-hidden="true"></div>
+
+    {% if user.is_authenticated %}
+    <!-- ═══════════════════════════════════════════════════
+         AUTHENTICATED APP LAYOUT (Sidebar + Main Content)
+    ══════════════════════════════════════════════════════ -->
+    <div class="app-layout">
+
+        <!-- ─── Sidebar ───────────────────────────────── -->
+        <aside class="app-sidebar" id="sidebarNav" aria-label="Sidebar Navigation">
+            <!-- Brand -->
+            <div class="brand-header">
+                <a href="{% url 'home' %}" class="brand-logo" id="brandLogoLink">
+                    <div class="brand-icon"><i class="fa-solid fa-shapes"></i></div>
+                    <div class="brand-text">
+                        <span class="brand-name">NovaPulse</span>
+                        <span class="brand-badge">Base Template</span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="nav-menu" aria-label="Main Navigation">
+                <div class="nav-section-title">เมนูหลัก</div>
+                <a href="{% url 'home' %}"
+                   class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+                   id="navHomeLink">
+                    <i class="fa-solid fa-house"></i>
+                    <span>หน้าแรก (Starter)</span>
+                </a>
+
+                <div class="nav-section-title">บัญชีผู้ใช้ & โปรไฟล์</div>
+                <a href="{% url 'accounts:profile' %}"
+                   class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}"
+                   id="navProfileLink">
+                    <i class="fa-regular fa-circle-user"></i>
+                    <span>โปรไฟล์ของฉัน</span>
+                </a>
+                <a href="{% url 'accounts:profile_edit' %}"
+                   class="nav-link {% if request.resolver_match.url_name == 'profile_edit' %}active{% endif %}"
+                   id="navProfileEditLink">
+                    <i class="fa-regular fa-pen-to-square"></i>
+                    <span>แก้ไขโปรไฟล์</span>
+                </a>
+                <a href="{% url 'accounts:password_change' %}"
+                   class="nav-link {% if request.resolver_match.url_name == 'password_change' %}active{% endif %}"
+                   id="navPasswordLink">
+                    <i class="fa-solid fa-key"></i>
+                    <span>เปลี่ยนรหัสผ่าน</span>
+                </a>
+
+                <div class="nav-section-title">ระบบหลังบ้าน</div>
+                <a href="/admin/" target="_blank" rel="noopener" class="nav-link" id="navAdminLink">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>จัดการระบบ (Admin)</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square external-icon"></i>
+                </a>
+
+                <!-- Logout via POST form -->
+                <form method="post" action="{% url 'accounts:logout' %}" id="sidebarLogoutForm">
+                    {% csrf_token %}
+                    <button type="submit" class="nav-link nav-link-btn" id="sidebarLogoutBtn">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span>ออกจากระบบ</span>
+                    </button>
+                </form>
+            </nav>
+
+            <!-- Sidebar Footer -->
+            <div class="sidebar-footer">
+                <div class="sys-status">
+                    <span class="status-dot pulsing" aria-hidden="true"></span>
+                    <span class="status-label">เซสชัน: {{ session_timeout_minutes|default:60 }} นาที</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ─── Main Content ───────────────────────────── -->
+        <main class="main-content" id="mainContent">
+            <!-- Top Navbar -->
+            <header class="top-navbar" id="topNavbar">
+                <div class="navbar-left">
+                    <button class="mobile-toggle" id="mobileMenuToggle" aria-label="เปิด/ปิด เมนู">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div class="navbar-breadcrumb">
+                        {% block breadcrumb %}
+                        <span class="breadcrumb-page">{% block breadcrumb_label %}หน้าแรก{% endblock %}</span>
+                        {% endblock %}
+                    </div>
+                </div>
+
+                <div class="navbar-right">
+                    <!-- Session countdown timer display -->
+                    <div class="session-timer" id="sessionTimer" title="เวลา Session ที่เหลือก่อนออกจากระบบอัตโนมัติ">
+                        <i class="fa-regular fa-clock"></i>
+                        <span id="sessionCountdown">--:--</span>
+                    </div>
+
+                    <!-- User dropdown -->
+                    <div class="user-dropdown-wrapper" id="userDropdownWrapper">
+                        <button class="user-pill" id="userDropdownToggle" aria-haspopup="true" aria-expanded="false">
+                            <div class="avatar-sm" id="navAvatarBox">
+                                {% if user.profile.avatar %}
+                                    <img src="{{ user.profile.avatar.url }}" alt="{{ user.username }}" class="avatar-img">
+                                {% else %}
+                                    <i class="fa-solid fa-user-astronaut"></i>
+                                {% endif %}
+                            </div>
+                            <span class="user-display-name">
+                                {{ user.profile.get_full_name|default:user.username|truncatechars:20 }}
+                            </span>
+                            <i class="fa-solid fa-chevron-down chevron-icon"></i>
+                        </button>
+
+                        <div class="user-dropdown" id="userDropdownMenu" role="menu">
+                            <div class="dropdown-header">
+                                <div class="dropdown-avatar">
+                                    {% if user.profile.avatar %}
+                                        <img src="{{ user.profile.avatar.url }}" alt="{{ user.username }}" class="avatar-img">
+                                    {% else %}
+                                        <i class="fa-solid fa-user-astronaut"></i>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <div class="dropdown-name">{{ user.profile.get_full_name|default:user.username }}</div>
+                                    <div class="dropdown-email">{{ user.email|default:"ยังไม่ได้ตั้งอีเมล" }}</div>
+                                </div>
+                            </div>
+                            <hr class="dropdown-divider">
+                            <a href="{% url 'accounts:profile' %}" class="dropdown-item" id="dropdownProfileLink">
+                                <i class="fa-regular fa-circle-user"></i> โปรไฟล์ของฉัน
+                            </a>
+                            <a href="{% url 'accounts:profile_edit' %}" class="dropdown-item" id="dropdownEditLink">
+                                <i class="fa-regular fa-pen-to-square"></i> แก้ไขโปรไฟล์
+                            </a>
+                            <a href="{% url 'accounts:password_change' %}" class="dropdown-item" id="dropdownPasswordLink">
+                                <i class="fa-solid fa-key"></i> เปลี่ยนรหัสผ่าน
+                            </a>
+                            <a href="/admin/" target="_blank" rel="noopener" class="dropdown-item" id="dropdownAdminLink">
+                                <i class="fa-solid fa-shield-halved"></i> ระบบจัดการหลังบ้าน
+                            </a>
+                            <hr class="dropdown-divider">
+                            <form method="post" action="{% url 'accounts:logout' %}" id="navbarLogoutForm">
+                                {% csrf_token %}
+                                <button type="submit" class="dropdown-item dropdown-logout" id="navbarLogoutBtn">
+                                    <i class="fa-solid fa-right-from-bracket"></i> ออกจากระบบ
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Flash Messages -->
+            {% if messages %}
+            <div class="messages-container" id="messagesContainer" role="status" aria-live="polite">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags|default:'info' }} fade-in" role="alert">
+                    <div class="alert-content">
+                        {% if message.tags == 'success' %}<i class="fa-solid fa-circle-check"></i>
+                        {% elif message.tags == 'warning' %}<i class="fa-solid fa-triangle-exclamation"></i>
+                        {% elif message.tags == 'error' %}<i class="fa-solid fa-circle-xmark"></i>
+                        {% else %}<i class="fa-solid fa-circle-info"></i>{% endif %}
+                        <span>{{ message }}</span>
+                    </div>
+                    <button class="alert-close" onclick="this.parentElement.remove()" aria-label="ปิดการแจ้งเตือน">&times;</button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Page Body: Single instance of block content -->
+            <div class="content-body" id="contentBody">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div><!-- /.app-layout -->
+
+    {% else %}
+    <!-- ═══════════════════════════════════════════════════
+         GUEST / AUTH LAYOUT (Centered Card, No Sidebar)
+    ══════════════════════════════════════════════════════ -->
+    <div class="auth-layout">
+        {% if messages %}
+        <div class="auth-messages" role="status" aria-live="polite">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }} fade-in" role="alert">
+                <div class="alert-content">
+                    {% if message.tags == 'success' %}<i class="fa-solid fa-circle-check"></i>
+                    {% elif message.tags == 'warning' %}<i class="fa-solid fa-triangle-exclamation"></i>
+                    {% elif message.tags == 'error' %}<i class="fa-solid fa-circle-xmark"></i>
+                    {% else %}<i class="fa-solid fa-circle-info"></i>{% endif %}
+                    <span>{{ message }}</span>
+                </div>
+                <button class="alert-close" onclick="this.parentElement.remove()" aria-label="ปิด">&times;</button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% block auth_content %}{% endblock %}
+    </div>
+    {% endif %}
+
+    <!-- Global Scripts -->
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

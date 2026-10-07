@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}หน้าแรก — โครงสร้างระบบฐาน{% endblock %}
+{% block breadcrumb_label %}หน้าแรก{% endblock %}
+
+{% block content %}
+<div class="home-page-container">
+
+    <!-- ── 1. Hero Welcome Banner ────────────────────────────────────────── -->
+    <div class="hero-welcome-card glass-card">
+        <div class="hero-welcome-content">
+            <div class="hero-badge">
+                <span class="status-dot pulsing"></span>
+                <span>NovaPulse Base Template Ready</span>
+            </div>
+            <h1 class="hero-title">
+                สวัสดี, <span class="gradient-text">{{ user.profile.get_full_name|default:user.username }}</span> 👋
+            </h1>
+            <p class="hero-subtitle">
+                โครงสร้างระบบฐานพร้อม Navbar, Sidebar, ระบบโปรไฟล์, Authentication, Session Timeout และ Cyber Security แข็งแกร่ง สำหรับนำไปต่อยอดในโปรเจกต์ถัดไป
+            </p>
+
+            <div class="hero-quick-stats">
+                <div class="stat-pill">
+                    <i class="fa-solid fa-clock"></i>
+                    <span>Session Idle Timeout: <strong>{{ session_timeout_minutes|default:60 }} นาที</strong></span>
+                </div>
+                <div class="stat-pill">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>Cyber Security: <strong>Active (Axes + Audit)</strong></span>
+                </div>
+                <div class="stat-pill">
+                    <i class="fa-solid fa-user-check"></i>
+                    <span>สถานะบัญชี: <strong>{% if user.is_staff %}ผู้ดูแลระบบ (Admin){% else %}ผู้ใช้งานทั่วไป{% endif %}</strong></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-welcome-actions">
+            <a href="{% url 'accounts:profile' %}" class="btn btn-primary" id="homeViewProfileBtn">
+                <i class="fa-regular fa-circle-user"></i> ดูโปรไฟล์ของฉัน
+            </a>
+            <a href="{% url 'accounts:profile_edit' %}" class="btn btn-secondary" id="homeEditProfileBtn">
+                <i class="fa-regular fa-pen-to-square"></i> แก้ไขข้อมูลส่วนตัว
+            </a>
+        </div>
+    </div>
+
+    <!-- ── 2. Three Pillars Feature Overview ────────────────────────────── -->
+    <div class="feature-grid">
+
+        <!-- Pillar 1: ระบบโปรไฟล์ -->
+        <div class="feature-card glass-card">
+            <div class="feature-card-header">
+                <div class="feature-icon feature-icon-purple">
+                    <i class="fa-solid fa-id-card"></i>
+                </div>
+                <div class="feature-header-meta">
+                    <h2 class="feature-title">1. ระบบโปรไฟล์</h2>
+                    <span class="feature-tag">Profile System</span>
+                </div>
+            </div>
+            <p class="feature-desc">
+                จัดการข้อมูลส่วนบุคคลอย่างครบถ้วน พร้อมการตรวจสอบความถูกต้องและความปลอดภัย:
+            </p>
+            <ul class="feature-list">
+                <li><i class="fa-solid fa-check"></i> เปลี่ยนชื่อ - นามสกุล และคำแนะนำตัว (Bio)</li>
+                <li><i class="fa-solid fa-check"></i> อัปโหลดรูปประจำตัว (Avatar) พร้อมพรีวิวสด &amp; เช็คขนาดไฟล์ (≤ 5MB)</li>
+                <li><i class="fa-solid fa-check"></i> จัดการอีเมล พร้อมระบบตรวจสอบความซ้ำซ้อน</li>
+                <li><i class="fa-solid fa-check"></i> จัดการเบอร์โทรศัพท์ด้วย Regex Validation</li>
+                <li><i class="fa-solid fa-check"></i> ระบบเปลี่ยนรหัสผ่านที่ปลอดภัย</li>
+            </ul>
+            <div class="feature-card-footer">
+                <a href="{% url 'accounts:profile_edit' %}" class="btn btn-outline-purple btn-sm">
+                    <i class="fa-solid fa-arrow-right"></i> ไปที่หน้าแก้ไขโปรไฟล์
+                </a>
+            </div>
+        </div>
+
+        <!-- Pillar 2: ระบบ Login & Session -->
+        <div class="feature-card glass-card">
+            <div class="feature-card-header">
+                <div class="feature-icon feature-icon-cyan">
+                    <i class="fa-solid fa-stopwatch"></i>
+                </div>
+                <div class="feature-header-meta">
+                    <h2 class="feature-title">2. Login &amp; Session Timeout</h2>
+                    <span class="feature-tag">Session Control</span>
+                </div>
+            </div>
+            <p class="feature-desc">
+                ระบบจัดการการเข้าสู่ระบบและควบคุมเวลาการใช้งานอัตโนมัติ:
+            </p>
+            <ul class="feature-list">
+                <li><i class="fa-solid fa-check"></i> เข้าสู่ระบบและออกจากระบบด้วย POST CSRF Guard</li>
+                <li><i class="fa-solid fa-check"></i> เซสชันหมดอายุอัตโนมัติเมื่อไม่ใช้งาน <strong>{{ session_timeout_minutes|default:60 }} นาที</strong></li>
+                <li><i class="fa-solid fa-check"></i> แสดงเวลานับถอยหลังแบบเรียลไทม์บนแถบ Navbar</li>
+                <li><i class="fa-solid fa-check"></i> <strong>สามารถตั้งเวลาได้ในหลังบ้าน (Django Admin)</strong></li>
+                <li><i class="fa-solid fa-check"></i> บันทึกเหตุการณ์ Timeout เข้าสู่วงรอบความปลอดภัย</li>
+            </ul>
+            <div class="feature-card-footer">
+                <a href="/admin/" target="_blank" rel="noopener" class="btn btn-outline-cyan btn-sm">
+                    <i class="fa-solid fa-sliders"></i> ตั้งเวลาเซสชันในหลังบ้าน
+                </a>
+            </div>
+        </div>
+
+        <!-- Pillar 3: Cyber Security -->
+        <div class="feature-card glass-card">
+            <div class="feature-card-header">
+                <div class="feature-icon feature-icon-green">
+                    <i class="fa-solid fa-shield-virus"></i>
+                </div>
+                <div class="feature-header-meta">
+                    <h2 class="feature-title">3. ป้องกัน Cyber Security</h2>
+                    <span class="feature-tag">Security Hardened</span>
+                </div>
+            </div>
+            <p class="feature-desc">
+                การปกป้องเว็บแอปพลิเคชันตามมาตรฐานความปลอดภัยระดับสูง:
+            </p>
+            <ul class="feature-list">
+                <li><i class="fa-solid fa-check"></i> ป้องกันการโจมตีแบบ Brute-force ด้วย django-axes</li>
+                <li><i class="fa-solid fa-check"></i> ระบบ Audit Log บันทึก IP, User-Agent, และเวลาทุกกิจกรรม</li>
+                <li><i class="fa-solid fa-check"></i> การป้องกัน XSS, Clickjacking (DENY), MIME-Sniffing</li>
+                <li><i class="fa-solid fa-check"></i> คุกกี้ปลอดภัย HttpOnly + SameSite=Lax</li>
+                <li><i class="fa-solid fa-check"></i> ซ่อนรหัสผ่านใน Log ด้วย Sensitive Parameters</li>
+            </ul>
+            <div class="feature-card-footer">
+                <a href="{% url 'accounts:profile' %}" class="btn btn-outline-green btn-sm">
+                    <i class="fa-solid fa-list-check"></i> ดูบันทึก Audit Log
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ── 3. Developer Extension Canvas ────────────────────────────────── -->
+    <div class="extension-canvas glass-card">
+        <div class="canvas-header">
+            <div class="canvas-title-group">
+                <div class="canvas-icon"><i class="fa-solid fa-code"></i></div>
+                <div>
+                    <h2 class="canvas-title">พื้นที่พร้อมต่อยอดสำหรับโปรเจกต์ถัดไป (Developer Ready)</h2>
+                    <p class="canvas-subtitle">โครงสร้าง HTML/CSS/JS ทั้งหมดถูกออกแบบเป็นโมดูล สามารถนำไปสร้างหน้าเว็บใหม่ได้ทันที</p>
+                </div>
+            </div>
+            <span class="badge-accent">Template Foundation</span>
+        </div>
+
+        <div class="canvas-content-box">
+            <div class="code-preview-snippet">
+                <div class="snippet-header">
+                    <span class="snippet-dot red"></span>
+                    <span class="snippet-dot yellow"></span>
+                    <span class="snippet-dot green"></span>
+                    <span class="snippet-filename">templates/your_new_app/page.html</span>
+                </div>
+                <pre class="snippet-code"><code>&#123;% extends 'base.html' %&#125;
+
+&#123;% block title %&#125;ชื่อหน้าโปรเจกต์ของคุณ&#123;% endblock %&#125;
+&#123;% block breadcrumb_label %&#125;หน้าใหม่&#123;% endblock %&#125;
+
+&#123;% block content %&#125;
+&lt;div class="your-project-container"&gt;
+    &lt;!-- เขียนเนื้อหาและ Logic ของโปรเจกต์ใหม่ตรงนี้ได้ทันที --&gt;
+    &lt;h1&gt;โปรเจกต์ใหม่ของคุณ&lt;/h1&gt;
+&lt;/div&gt;
+&#123;% endblock %&#125;</code></pre>
+            </div>
+
+            <div class="canvas-instructions">
+                <h3 class="instructions-heading"><i class="fa-solid fa-lightbulb"></i> วิธีต่อยอดโปรเจกต์ในอนาคต:</h3>
+                <ol class="instructions-list">
+                    <li>สร้างแอปพลิเคชันใหม่ด้วยคำสั่ง <code>python manage.py startapp your_app</code></li>
+                    <li>ลงทะเบียนแอปใน <code>config/settings.py</code> ในส่วน <code>INSTALLED_APPS</code></li>
+                    <li>สร้างเทมเพลตที่ขยายจาก <code>&#123;% extends 'base.html' %&#125;</code> เพื่อให้ได้ Navbar, Sidebar และความปลอดภัยโดยอัตโนมัติ</li>
+                    <li>เพิ่มลิงก์เมนูใน Sidebar ที่ไฟล์ <code>templates/base.html</code></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

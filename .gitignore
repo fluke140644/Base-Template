@@ -1,0 +1,15 @@
+# Python & Cache
+*.pyc
+__pycache__/
+
+# Virtual Environment
+.venv/
+venv/
+env/
+
+# Database & Uploads
+db.sqlite3
+media/
+
+# Environment Variables
+.env

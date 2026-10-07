@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}แก้ไขโปรไฟล์{% endblock %}
+{% block breadcrumb_label %}แก้ไขโปรไฟล์{% endblock %}
+
+{% block content %}
+<div class="profile-edit-page">
+    <div class="page-header">
+        <div class="header-titles">
+            <h1 class="page-title">แก้ไขโปรไฟล์</h1>
+            <p class="page-subtitle">จัดการข้อมูลส่วนตัว อีเมล เบอร์โทร และรูปภาพประจำตัว</p>
+        </div>
+        <a href="{% url 'accounts:profile' %}" class="btn btn-secondary" id="backToProfileBtn">
+            <i class="fa-solid fa-arrow-left"></i> กลับ
+        </a>
+    </div>
+
+    <div class="edit-grid">
+
+        <!-- ── Column 1: Avatar Upload ──────────────────── -->
+        <div class="glass-card avatar-upload-card" id="avatarCard">
+            <h2 class="card-section-title"><i class="fa-regular fa-image"></i> รูปประจำตัว</h2>
+
+            <div class="current-avatar-preview" id="avatarPreviewBox">
+                {% if profile.avatar %}
+                    <img src="{{ profile.avatar.url }}" alt="avatar" class="preview-avatar-img" id="avatarPreviewImg">
+                {% else %}
+                    <div class="avatar-placeholder-lg" id="avatarPreviewPlaceholder">
+                        <i class="fa-solid fa-user-astronaut"></i>
+                    </div>
+                {% endif %}
+            </div>
+
+            <form method="post" enctype="multipart/form-data"
+                  action="{% url 'accounts:profile_edit' %}"
+                  id="avatarUploadForm" class="avatar-form">
+                {% csrf_token %}
+                <input type="hidden" name="_action" value="avatar">
+
+                <label for="id_avatar_upload" class="avatar-upload-label" id="avatarUploadLabel">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                    คลิกเพื่อเลือกรูปภาพ
+                </label>
+                {{ avatar_form.avatar }}
+                {% if avatar_form.avatar.errors %}
+                    <span class="field-error">{{ avatar_form.avatar.errors.0 }}</span>
+                {% endif %}
+                <p class="avatar-hint">PNG, JPG, WebP · ไม่เกิน 5 MB</p>
+
+                <button type="submit" class="btn btn-primary btn-sm" id="saveAvatarBtn">
+                    <i class="fa-solid fa-floppy-disk"></i> บันทึกรูปภาพ
+                </button>
+            </form>
+        </div>
+
+        <!-- ── Column 2: Profile Info + Email ──────────── -->
+        <div class="edit-forms-column">
+
+            <!-- Personal Info Form -->
+            <div class="glass-card edit-form-card" id="profileInfoCard">
+                <h2 class="card-section-title"><i class="fa-regular fa-id-card"></i> ข้อมูลส่วนตัว</h2>
+                <form method="post" action="{% url 'accounts:profile_edit' %}" id="profileInfoForm" class="styled-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="_action" value="profile">
+
+                    <div class="form-row">
+                        <div class="form-group flex-1">
+                            <label for="{{ profile_form.first_name.id_for_label }}" class="form-label">ชื่อจริง</label>
+                            {{ profile_form.first_name }}
+                            {% if profile_form.first_name.errors %}
+                                <span class="field-error">{{ profile_form.first_name.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group flex-1">
+                            <label for="{{ profile_form.last_name.id_for_label }}" class="form-label">นามสกุล</label>
+                            {{ profile_form.last_name }}
+                            {% if profile_form.last_name.errors %}
+                                <span class="field-error">{{ profile_form.last_name.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ profile_form.phone.id_for_label }}" class="form-label">
+                            <i class="fa-solid fa-phone"></i> เบอร์โทรศัพท์
+                        </label>
+                        {{ profile_form.phone }}
+                        {% if profile_form.phone.errors %}
+                            <span class="field-error">{{ profile_form.phone.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ profile_form.bio.id_for_label }}" class="form-label">
+                            <i class="fa-regular fa-message"></i> แนะนำตัวสั้นๆ
+                        </label>
+                        {{ profile_form.bio }}
+                        {% if profile_form.bio.errors %}
+                            <span class="field-error">{{ profile_form.bio.errors.0 }}</span>
+                        {% endif %}
+                        <span class="char-count" id="bioCharCount">0 / 300 ตัวอักษร</span>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" id="saveProfileBtn">
+                            <i class="fa-solid fa-floppy-disk"></i> บันทึกข้อมูลส่วนตัว
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Email Form -->
+            <div class="glass-card edit-form-card" id="emailCard">
+                <h2 class="card-section-title"><i class="fa-regular fa-envelope"></i> จัดการอีเมล</h2>
+                <form method="post" action="{% url 'accounts:profile_edit' %}" id="emailEditForm" class="styled-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="_action" value="email">
+
+                    <div class="form-group">
+                        <label for="{{ email_form.email.id_for_label }}" class="form-label">อีเมลปัจจุบัน</label>
+                        {{ email_form.email }}
+                        {% if email_form.email.errors %}
+                            <span class="field-error">{{ email_form.email.errors.0 }}</span>
+                        {% endif %}
+                        <span class="form-hint">อีเมลต้องไม่ซ้ำกับผู้ใช้อื่นในระบบ</span>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-secondary" id="saveEmailBtn">
+                            <i class="fa-solid fa-envelope-circle-check"></i> บันทึกอีเมล
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </div><!-- /.edit-forms-column -->
+    </div><!-- /.edit-grid -->
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Live avatar preview
+document.getElementById('id_avatar_upload').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+        let img = document.getElementById('avatarPreviewImg');
+        const placeholder = document.getElementById('avatarPreviewPlaceholder');
+        if (!img) {
+            img = document.createElement('img');
+            img.id = 'avatarPreviewImg';
+            img.className = 'preview-avatar-img';
+            if (placeholder) placeholder.replaceWith(img);
+            else document.getElementById('avatarPreviewBox').appendChild(img);
+        }
+        img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+});
+
+// Bio character counter
+const bioField = document.getElementById('id_profile_bio');
+const bioCounter = document.getElementById('bioCharCount');
+if (bioField && bioCounter) {
+    const update = () => { bioCounter.textContent = `${bioField.value.length} / 300 ตัวอักษร`; };
+    bioField.addEventListener('input', update);
+    update();
+}
+</script>
+{% endblock %}

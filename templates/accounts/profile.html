@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}โปรไฟล์ของฉัน{% endblock %}
+{% block breadcrumb_label %}โปรไฟล์ของฉัน{% endblock %}
+
+{% block content %}
+<div class="profile-page">
+
+    <!-- Profile Header Hero Card -->
+    <div class="profile-hero glass-card">
+        <div class="profile-avatar-box">
+            {% if profile.avatar %}
+                <img src="{{ profile.avatar.url }}" alt="{{ profile.get_full_name }}"
+                     class="profile-avatar-img" id="profileHeroAvatar">
+            {% else %}
+                <div class="profile-avatar-placeholder" id="profileHeroAvatarPlaceholder">
+                    <i class="fa-solid fa-user-astronaut"></i>
+                </div>
+            {% endif %}
+        </div>
+        <div class="profile-hero-info">
+            <h1 class="profile-hero-name">{{ profile.get_full_name }}</h1>
+            <p class="profile-hero-username">@{{ request.user.username }}</p>
+            {% if profile.bio %}
+                <p class="profile-hero-bio">{{ profile.bio }}</p>
+            {% else %}
+                <p class="profile-hero-bio text-muted">ยังไม่ได้ระบุข้อมูลแนะนำตัว (Bio)</p>
+            {% endif %}
+            <div class="profile-hero-meta">
+                {% if request.user.email %}
+                <span class="meta-chip">
+                    <i class="fa-regular fa-envelope"></i>
+                    {{ request.user.email }}
+                </span>
+                {% endif %}
+                {% if profile.phone %}
+                <span class="meta-chip">
+                    <i class="fa-solid fa-phone"></i>
+                    {{ profile.phone }}
+                </span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="profile-hero-actions">
+            <a href="{% url 'accounts:profile_edit' %}" class="btn btn-primary" id="profileEditHeroBtn">
+                <i class="fa-regular fa-pen-to-square"></i> แก้ไขโปรไฟล์
+            </a>
+            <a href="{% url 'accounts:password_change' %}" class="btn btn-secondary" id="profileChangePwHeroBtn">
+                <i class="fa-solid fa-key"></i> เปลี่ยนรหัสผ่าน
+            </a>
+        </div>
+    </div>
+
+    <!-- Detail Panels Grid -->
+    <div class="profile-detail-grid">
+        <div class="glass-card profile-info-card">
+            <h2 class="card-section-title"><i class="fa-regular fa-id-card"></i> ข้อมูลส่วนบุคคล</h2>
+            <ul class="profile-info-list">
+                <li class="profile-info-row">
+                    <span class="pi-label">ชื่อจริง</span>
+                    <span class="pi-value">{{ profile.first_name|default:"—" }}</span>
+                </li>
+                <li class="profile-info-row">
+                    <span class="pi-label">นามสกุล</span>
+                    <span class="pi-value">{{ profile.last_name|default:"—" }}</span>
+                </li>
+                <li class="profile-info-row">
+                    <span class="pi-label">ชื่อผู้ใช้ (Username)</span>
+                    <span class="pi-value"><code>{{ request.user.username }}</code></span>
+                </li>
+                <li class="profile-info-row">
+                    <span class="pi-label">อีเมล</span>
+                    <span class="pi-value">{{ request.user.email|default:"ยังไม่ได้ระบุอีเมล" }}</span>
+                </li>
+                <li class="profile-info-row">
+                    <span class="pi-label">เบอร์โทรศัพท์</span>
+                    <span class="pi-value">{{ profile.phone|default:"ยังไม่ได้ระบุเบอร์โทร" }}</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="glass-card profile-info-card">
+            <h2 class="card-section-title"><i class="fa-solid fa-shield-halved"></i> ความปลอดภัยบัญชี</h2>
+            <ul class="profile-info-list">
+                <li class="profile-info-row">
+                    <span class="pi-label">สถานะบัญชี</span>
+                    <span class="pi-value">
+                        {% if request.user.is_active %}
+                        <span class="badge-inline badge-success"><i class="fa-solid fa-circle-check"></i> ปกติ / ใช้งานได้</span>
+                        {% else %}
+                        <span class="badge-inline badge-danger">ถูกระงับ</span>
+                        {% endif %}
+                    </span>
+                </li>
+                <li class="profile-info-row">
+                    <span class="pi-label">ระดับสิทธิ์</span>
+                    <span class="pi-value">
+                        {% if request.user.is_superuser %}
+                        <span class="badge-inline badge-purple"><i class="fa-solid fa-shield-cat"></i> Superuser</span>
+                        {% elif request.user.is_staff %}
+                        <span class="badge-inline badge-warning"><i class="fa-solid fa-crown"></i> Staff / Admin</span>
+                        {% else %}
+                        <span class="badge-inline badge-neutral">ผู้ใช้งานทั่วไป</span>
+                        {% endif %}
+                    </span>
+                </li>
+                <li class="profile-info-row">
+                    <span class="pi-label">วันที่สมัครสมาชิก</span>
+                    <span class="pi-value">{{ request.user.date_joined|date:"d M Y, H:i" }} น.</span>
+                </li>
+                <li class="profile-info-row">
+                    <span class="pi-label">เข้าสู่ระบบล่าสุด</span>
+                    <span class="pi-value">{{ request.user.last_login|date:"d M Y, H:i"|default:"—" }} น.</span>
+                </li>
+                <li class="profile-info-row">
+                    <span class="pi-label">อัปเดตข้อมูลล่าสุด</span>
+                    <span class="pi-value">{{ profile.updated_at|date:"d M Y, H:i" }} น.</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Security Audit Trail -->
+    <div class="glass-card security-log-card" id="security-log">
+        <div class="card-header-flex">
+            <div>
+                <h2 class="card-section-title"><i class="fa-solid fa-fingerprint"></i> ประวัติเหตุการณ์ความปลอดภัยล่าสุด (Audit Trail)</h2>
+                <p class="card-section-subtitle">บันทึกกิจกรรมการเข้า-ออกจากระบบ และการเปลี่ยนรหัสผ่านเพื่อความปลอดภัย</p>
+            </div>
+            <span class="badge-accent">Security Logs</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="security-table">
+                <thead>
+                    <tr>
+                        <th>เหตุการณ์</th>
+                        <th>IP Address</th>
+                        <th>วันที่และเวลา</th>
+                        <th>สถานะ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for event in recent_events %}
+                    <tr>
+                        <td>
+                            <div class="event-badge-group">
+                                {% if event.event_type == 'login' %}
+                                    <span class="status-indicator status-green"></span>
+                                    <strong>เข้าสู่ระบบสำเร็จ</strong>
+                                {% elif event.event_type == 'logout' %}
+                                    <span class="status-indicator status-gray"></span>
+                                    <span>ออกจากระบบ</span>
+                                {% elif event.event_type == 'failed' %}
+                                    <span class="status-indicator status-red"></span>
+                                    <strong class="text-danger">ล็อกอินไม่สำเร็จ</strong>
+                                {% elif event.event_type == 'timeout' %}
+                                    <span class="status-indicator status-amber"></span>
+                                    <span class="text-warning">เซสชันหมดอายุ</span>
+                                {% elif event.event_type == 'password_change' %}
+                                    <span class="status-indicator status-purple"></span>
+                                    <strong>เปลี่ยนรหัสผ่าน</strong>
+                                {% else %}
+                                    <span class="status-indicator status-cyan"></span>
+                                    <span>{{ event.get_event_type_display }}</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td><code>{{ event.ip_address|default:"127.0.0.1" }}</code></td>
+                        <td>{{ event.timestamp|date:"d M Y, H:i:s" }} น.</td>
+                        <td>
+                            {% if event.event_type == 'failed' %}
+                                <span class="badge-inline badge-danger">ผิดพลาด</span>
+                            {% else %}
+                                <span class="badge-inline badge-success">สำเร็จ</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted" style="padding: 24px;">
+                            <i class="fa-regular fa-folder-open"></i> ยังไม่มีประวัติเหตุการณ์ความปลอดภัยที่บันทึก
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
